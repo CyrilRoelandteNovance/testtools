@@ -184,6 +184,12 @@ class RunTest:
                     if getattr(self.case, "force_failure", None):
                         self._run_user(_raise_force_fail_error)
                         failed = True
+                    for subtest, err in getattr(self.case, "_subtest_failures", ()):
+                        try:
+                            self.result.addSubTest(self.case, subtest, err)
+                        except AttributeError:
+                            self.result.addFailure(self.case, err)
+                        failed = True
                     if not failed:
                         self.result.addSuccess(
                             self.case, details=self.case.getDetails()
